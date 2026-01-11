@@ -1,0 +1,11 @@
+# 忽略 PyCharm 設定檔
+.idea/
+
+# 忽略虛擬環境
+.venv/
+venv/
+ENV/
+
+# 忽略 Python 快取
+__pycache__/
+*.py[cod]
