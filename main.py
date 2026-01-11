@@ -13,7 +13,10 @@ handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 
 MODELS_TO_TRY = [
+    "gemini-2.0-flash-lite",
+    "gemini-2.0-flash",
     "gemini-2.5-flash-lite",
+    "gemini-2.5-pro",
     "gemini-2.5-flash",
     "gemini-3-flash-preview"
 ]
