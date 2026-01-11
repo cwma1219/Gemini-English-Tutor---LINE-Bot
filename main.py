@@ -16,8 +16,8 @@ MODELS_TO_TRY = [
     "gemini-2.0-flash-lite",
     "gemini-2.0-flash",
     "gemini-2.5-flash-lite",
-    "gemini-2.5-pro",
     "gemini-2.5-flash",
+    "gemini-2.5-pro",
     "gemini-3-flash-preview"
 ]
 
@@ -51,6 +51,8 @@ def handle_message(event):
     final_reply = None
     success_model = None
 
+    print(f"\n[NEW MESSAGE] User: {user_id}")
+
     for model_id in MODELS_TO_TRY:
         try:
             response = client.models.generate_content(
@@ -63,28 +65,26 @@ def handle_message(event):
             )
             final_reply = response.text
             success_model = model_id
+            print(f"✅ SUCCESS: Model {model_id} worked.")
+            break
         except Exception as e:
             error_msg = str(e)
             if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
-                print(f"Model {model_id} quota exhausted, trying next...")
-                continue
+                print(f"❌ FULL: Model {model_id} quota exhausted.")
             else:
-                print(f"Error with {model_id}: {e}")
-                # 其他錯誤也先嘗試下個模型，除非是最後一個
-                continue
+                print(f"⚠️ ERROR: Model {model_id} failed. Reason: {error_msg}")
+            continue
 
     if final_reply:
         model_msg = {"role": "model", "parts": [{"text": final_reply}]}
         user_sessions[user_id].append(current_user_msg)
         user_sessions[user_id].append(model_msg)
         user_sessions[user_id] = user_sessions[user_id][-20:]
-        reply_text = final_reply
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_text)
-        )
+        reply_text = f"[{success_model}]\n{final_reply}"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
     else:
+        print("🛑 TERMINATED: All models in the list failed.")
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="I'm sorry, I'm a little tired. Can we talk again in a minute?")
