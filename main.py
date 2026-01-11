@@ -14,7 +14,7 @@ handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 
 
-MODEL_ID = "gemini-3-flash-preview"
+MODEL_ID = "gemini-2.0-flash-lite"
 SYSTEM_INSTRUCTION = "你是一個英文學習老師，請使用A2-B1等級的簡單英文回復。當使用者英文有誤時，請糾正並教學文法、片語、單字等基礎知識。並且不要使用md格式"
 
 user_sessions = {}
